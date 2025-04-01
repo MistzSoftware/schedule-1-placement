@@ -1,0 +1,20 @@
+{
+  "name": "schedule-1-placement",
+  "version": "0.0.0",
+  "description": "A free web app to visualize furniture placement and optimize your workflow before making purchases.",
+  "main": "index.js",
+  "scripts": {
+    "start": "vite",
+    "build": "vite build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "MistzSoftware",
+  "dependencies": {
+    "@types/fabric": "^5.3.10",
+    "fabric": "^6.6.1",
+    "interact.js": "^1.2.8"
+  },
+  "devDependencies": {
+    "vite": "^4.0.0"
+  }
+}

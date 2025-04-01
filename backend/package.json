@@ -1,0 +1,15 @@
+{
+  "name": "schedule-1-placement",
+  "version": "0.0.0",
+  "description": "A free web app to visualize furniture placement and optimize your workflow before making purchases.",
+  "main": "index.js",
+  "scripts": {
+    "start": "cd src/ && node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "MistzSoftware",
+  "dependencies": {
+    "express": "^5.1.0",
+    "nestjs": "^0.0.1"
+  }
+}
