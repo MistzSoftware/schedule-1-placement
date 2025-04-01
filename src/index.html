@@ -4,11 +4,21 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Schedule 1 Placement</title>
+  <link rel="stylesheet" href="/style.css">
 </head>
 <body>
   <h1>Schedule 1 Placement</h1>
-  <div class="canvas-container">
-    <canvas id="canvas" width="500" height="650"></canvas>
+  <div class="main-container">
+    <div class="canvas-container">
+      <canvas id="canvas" width="500" height="650"></canvas>
+    </div>
+    <div class="drawer">
+      <h2>Items</h2>
+      <div class="emoji-item" data-width="1" data-height="1" draggable="true">1x1</div>
+      <div class="emoji-item" data-width="2" data-height="1" draggable="true">2x1</div>
+      <div class="emoji-item" data-width="1" data-height="2" draggable="true">1x2</div>
+      <div class="emoji-item" data-width="2" data-height="2" draggable="true">2x2</div>
+    </div>
   </div>
   <script type="module" src="/app.ts"></script>
 </body>

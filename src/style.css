@@ -3,12 +3,47 @@ body {
   background-color: #eaeaea;
 }
 
+.main-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 20px;
+  padding: 20px;
+}
+
 .canvas-container {
+  border: 1px solid #ccc;
+}
+
+.drawer {
+  width: 150px;
+  background-color: #f9f9f9;
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.drawer h2 {
+  margin: 0 0 10px;
+  font-size: 18px;
+  text-align: center;
+}
+
+.emoji-item {
   display: flex;
   justify-content: center;
   align-items: center;
+  background-color: #ddd;
+  border: 1px solid #aaa;
+  width: 100%; /* Full width of the drawer */
+  height: 50px; /* Fixed height for consistency */
+  margin-bottom: 10px;
+  text-align: center;
+  cursor: grab;
+  border-radius: 5px;
+  font-size: 16px; /* Adjust font size for text labels */
 }
 
-canvas {
-  border: 1px solid #ccc;
+.emoji-item:active {
+  cursor: grabbing;
 }
