@@ -1,218 +1,299 @@
 import './style.css';
-import { Canvas, Rect, Line, Text, Group } from 'fabric'; // Import Text and Group
+import { Canvas, Rect, Line } from 'fabric';
+import motelMap from './maps/motel.json';
+import chineseApartmentMap from './maps/chinese_apartment.json';
+import houseMap from './maps/house.json';
 
-// Grid configuration
-const tileSize = 50;
-const canvasWidth = 10 * tileSize; // Width of the lower part
-const canvasHeight = (7 + 6) * tileSize; // Combined height of top and lower parts
+const tileSize = 50; // Size of each grid tile in pixels
+let currentMap = motelMap; // Default map
 
-// Initialize canvas
+// Initialize the Fabric.js canvas
 const canvas = new Canvas('canvas', {
-    width: canvasWidth,
-    height: canvasHeight,
-    backgroundColor: '#f0f0f0',
-    selection: false,
+  width: 10 * tileSize,
+  height: 13 * tileSize,
+  backgroundColor: '#f0f0f0',
+  selection: false,
 });
 
-// Create a clipping region to simulate the L-shape
-function applyClippingRegion() {
-    canvas.on('before:render', () => {
-        const ctx = canvas.getContext();
-        ctx.save();
-        ctx.beginPath();
-        ctx.rect(0, 0, 5 * tileSize, 7 * tileSize); // Top part
-        ctx.rect(0, 7 * tileSize, 10 * tileSize, 6 * tileSize); // Lower part
-        ctx.clip();
-    });
+/**
+ * Validates if a placement is valid based on grid bounds, inactive areas, and collisions.
+ * @param left - The left position of the object.
+ * @param top - The top position of the object.
+ * @param width - The width of the object.
+ * @param height - The height of the object.
+ * @param excludeObject - The object to exclude from collision checks.
+ * @returns True if the placement is valid, false otherwise.
+ */
+function isPlacementValid(left: number, top: number, width: number, height: number, excludeObject?: Rect): boolean {
+  const canvasWidth = canvas.getWidth();
+  const canvasHeight = canvas.getHeight();
 
-    canvas.on('after:render', () => {
-        const ctx = canvas.getContext();
-        ctx.restore();
-    });
+  // Check if the object is out of canvas bounds
+  if (left < 0 || top < 0 || left + width > canvasWidth || top + height > canvasHeight) return false;
+
+  // Check if the object is placed in inactive or restricted areas
+  const mapLayout = currentMap.layout;
+  const startX = Math.floor(left / tileSize);
+  const startY = Math.floor(top / tileSize);
+  const endX = Math.floor((left + width - 1) / tileSize);
+  const endY = Math.floor((top + height - 1) / tileSize);
+
+  for (let y = startY; y <= endY; y++) {
+    for (let x = startX; x <= endX; x++) {
+      if (mapLayout[y]?.[x] === 'inactive' || mapLayout[y]?.[x] === 'door') return false;
+    }
+  }
+
+  // Check for collisions with other objects
+  const objects = canvas.getObjects().filter((obj) => obj.evented || obj.selectable);
+  for (const obj of objects) {
+    if (obj === excludeObject) continue;
+
+    const objLeft = obj.left || 0;
+    const objTop = obj.top || 0;
+    const objWidth = Math.floor(obj.getScaledWidth() / tileSize) * tileSize;
+    const objHeight = Math.floor(obj.getScaledHeight() / tileSize) * tileSize;
+
+    if (left < objLeft + objWidth && left + width > objLeft && top < objTop + objHeight && top + height > objTop) {
+      return false;
+    }
+  }
+
+  return true;
 }
 
-// Create L-shaped grid
-function createLShapedGrid() {
-    const addVerticalLines = (startX: number, endX: number, startY: number, endY: number) => {
-        for (let x = startX; x <= endX; x += tileSize) {
-        canvas.add(new Line([x, startY, x, endY], {
-            stroke: '#ddd',
-            selectable: false,
-            evented: false,
-        }));
+/**
+ * Creates a grid overlay on the canvas based on the active tiles in the map layout.
+ * @param layout - The 2D array representing the map layout.
+ */
+function createGrid(layout: string[][]) {
+  layout.forEach((row, y) => {
+    row.forEach((tile, x) => {
+      if (tile === 'active') {
+        const left = x * tileSize;
+        const top = y * tileSize;
+
+        // Draw horizontal and vertical grid lines
+        canvas.add(new Line([left, top, left + tileSize, top], { stroke: '#cccccc', selectable: false, evented: false }));
+        canvas.add(new Line([left, top, left, top + tileSize], { stroke: '#cccccc', selectable: false, evented: false }));
+
+        // Draw boundary lines for the last row/column of active tiles
+        if (x === row.length - 1 || layout[y][x + 1] !== 'active') {
+          canvas.add(new Line([left + tileSize, top, left + tileSize, top + tileSize], { stroke: '#cccccc', selectable: false, evented: false }));
         }
-    };
-
-    const addHorizontalLines = (startX: number, endX: number, startY: number, endY: number) => {
-        for (let y = startY; y <= endY; y += tileSize) {
-        canvas.add(new Line([startX, y, endX, y], {
-            stroke: '#ddd',
-            selectable: false,
-            evented: false,
-        }));
+        if (y === layout.length - 1 || layout[y + 1]?.[x] !== 'active') {
+          canvas.add(new Line([left, top + tileSize, left + tileSize, top + tileSize], { stroke: '#cccccc', selectable: false, evented: false }));
         }
-    };
-
-  // Top part: 5 tiles by 7 tiles
-  addVerticalLines(0, 5 * tileSize, 0, 7 * tileSize);
-  addHorizontalLines(0, 5 * tileSize, 0, 7 * tileSize);
-
-  // Lower part: 10 tiles by 6 tiles
-  addVerticalLines(0, 10 * tileSize, 7 * tileSize, canvasHeight);
-  addHorizontalLines(0, 10 * tileSize, 7 * tileSize, canvasHeight);
-}
-
-// Add a test object
-function addTestObject() {
-    const rect = new Rect({
-        left: 100,
-        top: 100,
-        fill: 'rgba(255, 0, 0, 0.5)',
-        width: 100,
-        height: 100,
-        hasControls: false,
-        hasBorders: true,
+      }
     });
-    canvas.add(rect);
+  });
 }
 
-// Snap objects to the grid and restrict movement to the L-shaped bounds
-function enableSnapping() {
-    canvas.on('object:moving', (e) => {
-        if (!e.target) return;
+/**
+ * Updates the canvas size to match the dimensions of the map layout.
+ * @param map - The map object containing the layout.
+ */
+function updateCanvasSize(map: { layout: string[][] }) {
+  canvas.setWidth(map.layout[0].length * tileSize);
+  canvas.setHeight(map.layout.length * tileSize);
+  canvas.requestRenderAll();
+}
 
-        const target = e.target;
+/**
+ * Loads a map onto the canvas and renders its layout.
+ * @param map - The map object to load.
+ */
+function loadMap(map: { name: string; layout: string[][] }) {
+  updateCanvasSize(map);
+  canvas.clear();
 
-        // Snap to grid
-        let snappedLeft = Math.round(target.left / tileSize) * tileSize;
-        let snappedTop = Math.round(target.top / tileSize) * tileSize;
+  map.layout.forEach((row, y) => {
+    row.forEach((tile, x) => {
+      const left = x * tileSize;
+      const top = y * tileSize;
 
-        // Restrict movement to the L-shaped bounds
-        if (snappedTop < 7 * tileSize && snappedLeft >= 5 * tileSize) {
-        snappedLeft = 5 * tileSize - target.width;
-        }
-        if (snappedTop >= 7 * tileSize && snappedLeft >= 10 * tileSize) {
-        snappedLeft = 10 * tileSize - target.width;
-        }
-
-        if (snappedLeft < 0) snappedLeft = 0;
-        if (snappedTop < 0) snappedTop = 0;
-
-        if (snappedTop < 7 * tileSize && snappedLeft + target.width > 5 * tileSize) {
-        snappedLeft = 5 * tileSize - target.width;
-        }
-        if (snappedTop >= 7 * tileSize && snappedLeft + target.width > 10 * tileSize) {
-        snappedLeft = 10 * tileSize - target.width;
-        }
-
-        if (snappedTop + target.height > canvas.height) {
-        snappedTop = canvas.height - target.height;
-        }
-
-        target.set({
-        left: snappedLeft,
-        top: snappedTop,
-        });
-
-        canvas.requestRenderAll();
+      if (tile === 'active') {
+        canvas.add(new Rect({ left, top, width: tileSize, height: tileSize, fill: '#e0e0e0', selectable: false, evented: false }));
+      } else if (tile === 'door') {
+        canvas.add(new Rect({ left, top, width: tileSize, height: tileSize, fill: '#ffcc00', selectable: false, evented: false }));
+      }
     });
+  });
+
+  createGrid(map.layout);
 }
 
-// Check for collisions with existing objects or grid bounds
-function isPlacementValid(left: number, top: number, width: number, height: number): boolean {
-    console.log('Checking placement validity:', { left, top, width, height });
+/**
+ * Attaches event handlers to a rectangular object for movement, rotation, and validation.
+ * @param rect - The rectangular object.
+ * @param widthInTiles - The width of the object in tiles.
+ * @param heightInTiles - The height of the object in tiles.
+ */
+function attachObjectHandlers(rect: Rect, widthInTiles: number, heightInTiles: number) {
+  let lastValidState = { left: rect.left || 0, top: rect.top || 0, width: rect.width || 0, height: rect.height || 0 };
 
-    // Check if the shape is out of bounds
-    if (left < 0 || top < 0 || left + width > canvasWidth || top + height > canvasHeight) {
-        return false;
+  const handleKeyDown = (event: KeyboardEvent) => {
+    if ((event.key === 'R' || event.key === 'r') && canvas.getActiveObject() === rect) {
+      lastValidState = { left: rect.left || 0, top: rect.top || 0, width: rect.width || 0, height: rect.height || 0 };
+      [widthInTiles, heightInTiles] = [heightInTiles, widthInTiles];
+      rect.set({ width: widthInTiles * tileSize, height: heightInTiles * tileSize });
+      canvas.requestRenderAll();
+    }
+  };
+
+  const keydownListener = handleKeyDown.bind(this);
+  window.addEventListener('keydown', keydownListener);
+
+  rect.on('deselected', () => window.removeEventListener('keydown', keydownListener));
+
+  rect.on('moving', () => {
+    const snappedLeft = Math.round((rect.left || 0) / tileSize) * tileSize;
+    const snappedTop = Math.round((rect.top || 0) / tileSize) * tileSize;
+    rect.set({ left: snappedLeft, top: snappedTop });
+    canvas.requestRenderAll();
+  });
+
+  rect.on('modified', () => {
+    const snappedLeft = Math.round((rect.left || 0) / tileSize) * tileSize;
+    const snappedTop = Math.round((rect.top || 0) / tileSize) * tileSize;
+
+    if (!isPlacementValid(snappedLeft, snappedTop, rect.width || 0, rect.height || 0, rect)) {
+      alert('Invalid placement: Collision detected or out of bounds.');
+      rect.set({ ...lastValidState });
+      rect.setCoords();
+      canvas.discardActiveObject();
+    } else {
+      lastValidState = { left: rect.left || 0, top: rect.top || 0, width: rect.width || 0, height: rect.height || 0 };
     }
 
-    // Check for collisions with existing objects
-    const objects = canvas.getObjects().filter((obj) => obj.evented || obj.selectable); // Exclude grid lines
-    for (const obj of objects) {
-        const objLeft = obj.left || 0;
-        const objTop = obj.top || 0;
-        const objWidth = Math.floor(obj.getScaledWidth() / tileSize) * tileSize;
-        const objHeight = Math.floor(obj.getScaledHeight() / tileSize) * tileSize;
-
-        const isOverlapping =
-        left < objLeft + objWidth &&
-        left + width > objLeft &&
-        top < objTop + objHeight &&
-        top + height > objTop;
-
-        if (isOverlapping) {
-        return false;
-        }
-    }
-
-    return true;
+    canvas.requestRenderAll();
+  });
 }
 
+/**
+ * Enables drag-and-drop functionality for placing items on the canvas.
+ */
 function enableDragAndDrop() {
-    const emojiItems = document.querySelectorAll('.emoji-item');
+  document.querySelectorAll('.prop-button').forEach((item) => {
+    item.addEventListener('dragstart', (e) => {
+      const dragEvent = e as DragEvent;
+      if (!dragEvent.dataTransfer) return;
+      dragEvent.dataTransfer.setData('width', (item as HTMLElement).dataset.width || '1');
+      dragEvent.dataTransfer.setData('height', (item as HTMLElement).dataset.height || '1');
+    });
+  });
 
-    emojiItems.forEach((item) => {
-        item.addEventListener('dragstart', (e) => {
-            const dragEvent = e as DragEvent; // Explicitly cast the event to DragEvent
-            if (!dragEvent.dataTransfer) return;
-            const width = (item as HTMLElement).dataset.width;
-            const height = (item as HTMLElement).dataset.height;
-            dragEvent.dataTransfer.setData('width', width || '1');
-            dragEvent.dataTransfer.setData('height', height || '1');
-        });
+  const canvasContainer = canvas.getElement().parentElement;
+  canvasContainer?.addEventListener('dragover', (e) => e.preventDefault());
+
+  canvasContainer?.addEventListener('drop', (e) => {
+    const dragEvent = e as DragEvent;
+    dragEvent.preventDefault();
+    if (!dragEvent.dataTransfer) return;
+
+    const widthInTiles = parseInt(dragEvent.dataTransfer.getData('width'), 10);
+    const heightInTiles = parseInt(dragEvent.dataTransfer.getData('height'), 10);
+    const rectLeft = Math.floor(dragEvent.offsetX / tileSize) * tileSize;
+    const rectTop = Math.floor(dragEvent.offsetY / tileSize) * tileSize;
+
+    if (!isPlacementValid(rectLeft, rectTop, widthInTiles * tileSize, heightInTiles * tileSize)) {
+      alert('Invalid placement: Collision detected or out of bounds.');
+      return;
+    }
+
+    const rect = new Rect({
+      left: rectLeft,
+      top: rectTop,
+      width: widthInTiles * tileSize,
+      height: heightInTiles * tileSize,
+      fill: 'rgba(0, 128, 255, 0.3)',
+      stroke: '#007bff',
+      strokeWidth: 2,
+      hasControls: false,
+      hasBorders: true,
     });
 
-    const canvasContainer = canvas.getElement().parentElement; // Get the parent container of the Fabric.js canvas
-    canvasContainer?.addEventListener('dragover', (e) => {
-        const dragEvent = e as DragEvent; // Explicitly cast the event to DragEvent
-        dragEvent.preventDefault();
+    canvas.add(rect);
+    canvas.setActiveObject(rect);
+    attachObjectHandlers(rect, widthInTiles, heightInTiles);
+
+    canvas.getObjects().forEach((obj) => {
+      if (obj instanceof Rect) {
+        const objWidthInTiles = Math.round(obj.width / tileSize);
+        const objHeightInTiles = Math.round(obj.height / tileSize);
+        attachObjectHandlers(obj, objWidthInTiles, objHeightInTiles);
+      }
     });
 
-    canvasContainer?.addEventListener('drop', (e) => {
-        const dragEvent = e as DragEvent; // Explicitly cast the event to DragEvent
-        dragEvent.preventDefault();
-        if (!dragEvent.dataTransfer) return;
-
-        const widthInTiles = parseInt(dragEvent.dataTransfer.getData('width'), 10);
-        const heightInTiles = parseInt(dragEvent.dataTransfer.getData('height'), 10);
-
-        // Calculate snapped position
-        const rectLeft = Math.floor(dragEvent.offsetX / tileSize) * tileSize;
-        const rectTop = Math.floor(dragEvent.offsetY / tileSize) * tileSize;
-        const rectWidth = widthInTiles * tileSize;
-        const rectHeight = heightInTiles * tileSize;
-
-        // Check if placement is valid
-        if (!isPlacementValid(rectLeft, rectTop, rectWidth, rectHeight)) {
-            alert('Invalid placement: Collision detected or out of bounds.');
-            return;
-        }
-
-        const rect = new Rect({
-            left: rectLeft,
-            top: rectTop,
-            fill: 'rgba(0, 128, 255, 0.3)',
-            stroke: '#007bff',
-            strokeWidth: 2,
-            width: rectWidth,
-            height: rectHeight,
-            hasControls: false,
-            hasBorders: true,
-        });
-
-        canvas.add(rect);
-        canvas.requestRenderAll();
-    });
+    canvas.requestRenderAll();
+  });
 }
 
-// Initialize the canvas
+/**
+ * Enables snapping functionality to align objects to the grid.
+ */
+function enableSnapping() {
+  canvas.on('object:moving', (e) => {
+    const target = e.target;
+    if (!target) return;
+
+    const snappedLeft = Math.round(target.left / tileSize) * tileSize;
+    const snappedTop = Math.round(target.top / tileSize) * tileSize;
+
+    if (!isPlacementValid(snappedLeft, snappedTop, target.getScaledWidth(), target.getScaledHeight())) {
+      target.set({ left: snappedLeft, top: snappedTop });
+    }
+
+    canvas.requestRenderAll();
+  });
+
+  canvas.on('object:selected' as any, (e) => {
+    const target = e.target as Rect;
+    if (target) {
+      const widthInTiles = Math.round(target.width / tileSize);
+      const heightInTiles = Math.round(target.height / tileSize);
+      attachObjectHandlers(target, widthInTiles, heightInTiles);
+    }
+  });
+
+  canvas.on('selection:cleared', () => {
+    canvas.getObjects().forEach((obj) => {
+      if (obj instanceof Rect) {
+        const widthInTiles = Math.round(obj.width / tileSize);
+        const heightInTiles = Math.round(obj.height / tileSize);
+        attachObjectHandlers(obj, widthInTiles, heightInTiles);
+      }
+    });
+  });
+}
+
+/**
+ * Creates a map selection drawer with buttons to load different maps.
+ */
+function createMapDrawer() {
+  const drawer = document.querySelector('.maps-drawer');
+  const maps = [motelMap, chineseApartmentMap, houseMap];
+
+  maps.forEach((map) => {
+    const button = document.createElement('button');
+    button.classList.add('map-button');
+    button.textContent = map.name;
+    button.addEventListener('click', () => {
+      currentMap = map;
+      loadMap(currentMap);
+    });
+    drawer?.appendChild(button);
+  });
+}
+
+/**
+ * Initializes the canvas and sets up the application.
+ */
 function initializeCanvas() {
-    applyClippingRegion();
-    createLShapedGrid();
-    addTestObject();
-    enableSnapping();
-    enableDragAndDrop();
+  createMapDrawer();
+  loadMap(currentMap);
+  enableDragAndDrop();
+  enableSnapping();
 }
 
 initializeCanvas();

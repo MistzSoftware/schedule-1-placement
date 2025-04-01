@@ -1,0 +1,20 @@
+{
+  "name": "Motel",
+  "employees": 0,
+  "parking": 0,
+  "layout": [
+    ["active", "active", "active", "active", "active", "inactive", "inactive", "inactive", "inactive", "inactive"],
+    ["active", "active", "active", "active", "active", "inactive", "inactive", "inactive", "inactive", "inactive"],
+    ["active", "active", "active", "active", "active", "inactive", "inactive", "inactive", "inactive", "inactive"],
+    ["active", "active", "active", "active", "active", "inactive", "inactive", "inactive", "inactive", "inactive"],
+    ["active", "active", "active", "active", "active", "inactive", "inactive", "inactive", "inactive", "inactive"],
+    ["active", "active", "active", "active", "active", "inactive", "inactive", "inactive", "inactive", "inactive"],
+    ["active", "active", "active", "active", "active", "inactive", "inactive", "inactive", "inactive", "inactive"],
+    ["active", "active", "active", "active", "active", "active", "active", "active", "active", "active"],
+    ["active", "active", "active", "active", "active", "active", "active", "active", "active", "active"],
+    ["active", "active", "active", "active", "active", "active", "active", "active", "active", "active"],
+    ["active", "active", "active", "active", "active", "active", "active", "active", "active", "active"],
+    ["active", "active", "active", "active", "active", "active", "active", "active", "active", "active"],
+    ["active", "active", "active", "active", "active", "active", "active", "active", "active", "active"]
+  ]
+}

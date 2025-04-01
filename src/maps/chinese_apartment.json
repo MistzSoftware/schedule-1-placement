@@ -1,0 +1,19 @@
+{
+  "name": "Sweatshop",
+  "employees": 1,
+  "parking": 0,
+  "layout": [
+    ["inactive", "inactive", "inactive", "inactive", "inactive", "inactive", "inactive", "inactive", "active", "active", "active", "active", "active", "active", "active", "active", "active", "active" ],
+    ["inactive", "inactive", "inactive", "inactive", "inactive", "inactive", "inactive", "inactive", "active", "active", "active", "active", "active", "active", "active", "active", "active", "active" ],
+    ["inactive", "inactive", "inactive", "inactive", "inactive", "inactive", "inactive", "inactive", "active", "active", "active", "active", "active", "active", "active", "active", "active", "active" ],
+    ["inactive", "inactive", "inactive", "inactive", "inactive", "inactive", "inactive", "inactive", "active", "active", "active", "active", "active", "active", "active", "active", "active", "active" ],
+    ["inactive", "inactive", "inactive", "inactive", "inactive", "inactive", "inactive", "inactive", "active", "active", "active", "active", "active", "active", "active", "active", "active", "active" ],
+    ["inactive", "inactive", "inactive", "inactive", "inactive", "inactive", "inactive", "inactive", "active", "active", "active", "active", "active", "active", "active", "active", "active", "active" ],
+    ["active", "active", "active", "active", "active", "active", "active", "active", "active", "active", "active", "active", "active", "active", "active", "active", "active", "active" ],
+    ["active", "active", "active", "active", "active", "active", "active", "active", "active", "active", "active", "active", "active", "active", "active", "active", "active", "active" ],
+    ["active", "active", "active", "active", "active", "active", "active", "active", "active", "active", "active", "active", "active", "active", "active", "active", "active", "active" ],
+    ["active", "active", "active", "active", "active", "active", "active", "active", "active", "active", "active", "active", "active", "active", "active", "active", "active", "active" ],
+    ["active", "active", "active", "active", "active", "active", "inactive", "inactive", "active", "active", "active", "active", "active", "active", "active", "door", "door", "door" ],
+    ["active", "active", "active", "active", "active", "active", "inactive", "inactive", "active", "active", "active", "active", "active", "active", "active", "door", "door", "door" ]
+  ]
+}

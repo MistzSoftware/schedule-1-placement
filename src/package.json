@@ -1,6 +1,6 @@
 {
   "name": "schedule-1-placement",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "A free web app to visualize furniture placement and optimize your workflow before making purchases.",
   "main": "index.js",
   "scripts": {

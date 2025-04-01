@@ -1,6 +1,6 @@
 body {
   margin: 0;
-  background-color: #eaeaea;
+  background-color: #aaa;
 }
 
 .main-container {
@@ -29,7 +29,7 @@ body {
   text-align: center;
 }
 
-.emoji-item {
+.prop-button {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -44,6 +44,21 @@ body {
   font-size: 16px; /* Adjust font size for text labels */
 }
 
-.emoji-item:active {
+.map-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #ddd;
+  border: 1px solid #aaa;
+  width: 100%; /* Full width of the drawer */
+  height: 50px; /* Fixed height for consistency */
+  margin-bottom: 10px;
+  cursor: pointer;
+  text-align: center;
+  border-radius: 5px;
+  font-size: 16px; /* Adjust font size for text labels */
+}
+
+.prop-button:active {
   cursor: grabbing;
 }
