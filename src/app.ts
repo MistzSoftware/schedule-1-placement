@@ -1,5 +1,6 @@
 import './style.css';
 import { Canvas, Rect, Line } from 'fabric';
+import { showToast } from './components/toast'; // Import the toast component
 import motelMap from './maps/motel.json';
 import chineseApartmentMap from './maps/chinese_apartment.json';
 import houseMap from './maps/house.json';
@@ -158,7 +159,7 @@ function attachObjectHandlers(rect: Rect, widthInTiles: number, heightInTiles: n
     const snappedTop = Math.round((rect.top || 0) / tileSize) * tileSize;
 
     if (!isPlacementValid(snappedLeft, snappedTop, rect.width || 0, rect.height || 0, rect)) {
-      alert('Invalid placement: Collision detected or out of bounds.');
+      showToast('Invalid placement: Collision detected or out of bounds.', 'error');
       rect.set({ ...lastValidState });
       rect.setCoords();
       canvas.discardActiveObject();
@@ -197,7 +198,7 @@ function enableDragAndDrop() {
     const rectTop = Math.floor(dragEvent.offsetY / tileSize) * tileSize;
 
     if (!isPlacementValid(rectLeft, rectTop, widthInTiles * tileSize, heightInTiles * tileSize)) {
-      alert('Invalid placement: Collision detected or out of bounds.');
+      showToast('Invalid placement: Collision detected or out of bounds.', 'error');
       return;
     }
 
