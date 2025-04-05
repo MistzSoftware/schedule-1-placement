@@ -1,0 +1,64 @@
+body {
+    margin: 0;
+    background-color: #aaa;
+}
+
+.main-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 20px;
+    padding: 20px;
+}
+
+.canvas-container {
+    border: 1px solid #ccc;
+}
+
+.drawer {
+    width: 150px;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.drawer h2 {
+    margin: 0 0 10px;
+    font-size: 18px;
+    text-align: center;
+}
+
+.prop-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #ddd;
+    border: 1px solid #aaa;
+    width: 100%; /* Full width of the drawer */
+    height: 50px; /* Fixed height for consistency */
+    margin-bottom: 10px;
+    text-align: center;
+    cursor: grab;
+    border-radius: 5px;
+    font-size: 16px; /* Adjust font size for text labels */
+}
+
+.map-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #ddd;
+    border: 1px solid #aaa;
+    width: 100%; /* Full width of the drawer */
+    height: 50px; /* Fixed height for consistency */
+    margin-bottom: 10px;
+    cursor: pointer;
+    text-align: center;
+    border-radius: 5px;
+    font-size: 16px; /* Adjust font size for text labels */
+}
+
+.prop-button:active {
+    cursor: grabbing;
+}

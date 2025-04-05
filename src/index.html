@@ -4,30 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Schedule 1 Placement</title>
-  <link rel="stylesheet" href="/style.css">
 </head>
 <body>
-  <h1>Schedule 1 Placement</h1>
-  <div class="main-container">
-    <div class="drawer maps-drawer">
-      <h2>Maps</h2>
-      <!-- Map buttons will be dynamically added here -->
-    </div>
-    <div class="canvas-container">
-      <canvas id="canvas" width="500" height="650"></canvas>
-    </div>
-    <div class="drawer items-drawer">
-      <h2>Items</h2>
-      <div class="prop-button" data-width="1" data-height="1" draggable="true">Debug Tool</div>
-      <div class="prop-button" data-width="2" data-height="1" draggable="true">Sprinkler</div>
-      <div class="prop-button" data-width="1" data-height="2" draggable="true">Soil dispenser</div>
-      <div class="prop-button" data-width="2" data-height="2" draggable="true">Pot</div>
-      <div class="prop-button" data-width="4" data-height="2" draggable="true">Chemistry Station</div>
-      <div class="prop-button" data-width="4" data-height="2" draggable="true">Lab Oven</div>
-      <div class="prop-button" data-width="3" data-height="5" draggable="true">Bed</div>
-      <div class="prop-button" data-width="4" data-height="1" draggable="true">Large Storage Rack</div>
-    </div>
-  </div>
-  <script type="module" src="/app.ts"></script>
+  <div id="root"></div>
+  <script type="module" src="./main.tsx"></script>
 </body>
 </html>
