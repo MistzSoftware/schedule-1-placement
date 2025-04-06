@@ -10,6 +10,54 @@ const tileSize = 50; // Size of each grid tile in pixels
 function App() {
 const canvasRef = useRef<Canvas | null>(null);
 const [mapLayout, setMapLayout] = useState<string[][] | null>(null);
+const [isDeletionMode, setIsDeletionMode] = useState(false);
+
+const toggleDeletionMode = () => {
+    setIsDeletionMode((prev) => !prev);
+};
+
+const enableDeletionMode = () => {
+    if (!canvasRef.current) return;
+    const canvas = canvasRef.current;
+
+    canvas.on('mouse:down', (e) => {
+        if (!isDeletionMode || !e.target) return;
+
+        // Remove the clicked object
+        canvas.remove(e.target);
+        canvas.requestRenderAll();
+    });
+};
+
+useEffect(() => {
+    if (isDeletionMode) {
+        enableDeletionMode();
+    } else {
+        if (canvasRef.current) {
+            canvasRef.current.off('mouse:down');
+        }
+    }
+}, [isDeletionMode]);
+
+const handleKeyDown = (event: KeyboardEvent) => {
+    if (event.key === 'Backspace' && canvasRef.current) {
+        const canvas = canvasRef.current;
+        const activeObject = canvas.getActiveObject();
+
+        if (activeObject) {
+            canvas.remove(activeObject);
+            canvas.discardActiveObject();
+            canvas.requestRenderAll();
+        }
+    }
+};
+
+useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+        window.removeEventListener('keydown', handleKeyDown);
+    };
+}, []);
 
 useEffect(() => {
     if (!canvasRef.current) {
@@ -348,10 +396,6 @@ const enableSnapping = () => {
 
 const isPlacementValid = (left: number, top: number, width: number, height: number, excludeObject?: Rect): boolean => {
     if (!canvasRef.current) return false;
-    // if (!mapLayout) {
-    //     toast.error('Map layout is not loaded. Please load a map first.');
-    //     return false;
-    // }
 
     const canvas = canvasRef.current;
     const canvasWidth = canvas.getWidth();
@@ -397,6 +441,20 @@ const isPlacementValid = (left: number, top: number, width: number, height: numb
     return true;
 };
 
+const removeAllProps = () => {
+    if (!canvasRef.current) return;
+    const canvas = canvasRef.current;
+
+    // Remove all objects except the grid
+    canvas.getObjects().forEach((obj) => {
+        if (obj.evented || obj.selectable) {
+            canvas.remove(obj);
+        }
+    });
+
+    canvas.requestRenderAll();
+};
+
 return (
     <div className="main-container">
     <MapDrawer onMapChange={loadMap} />
@@ -414,6 +472,12 @@ return (
         <div className="prop-button" data-width="1" data-height="2" draggable="true">
         Soil Dispenser
         </div>
+        <button onClick={removeAllProps} className="remove-props-button">
+        Remove All Props
+        </button>
+        <button onClick={toggleDeletionMode} className={`deletion-mode-button ${isDeletionMode ? 'active' : ''}`}>
+            {isDeletionMode ? 'Disable Deletion Mode' : 'Enable Deletion Mode'}
+        </button>
     </div>
     </div>
 );
