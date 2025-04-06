@@ -21,10 +21,15 @@ useEffect(() => {
     });
 
     displayDefaultMessage();
-    enableDragAndDrop();
-    enableSnapping();
     }
 }, []);
+
+useEffect(() => {
+    if (mapLayout) {
+        enableDragAndDrop();
+        enableSnapping();
+    }
+}, [mapLayout]);
 
 const displayDefaultMessage = () => {
     if (!canvasRef.current) return;
@@ -68,41 +73,42 @@ const loadMap = (map: { name: string; layout: string[][] }) => {
         canvas.add(text);
         return;
     }
-    setMapLayout(map.layout);
+
+    setMapLayout(map.layout); // Update mapLayout state
     updateCanvasSize(map);
     canvas.clear();
 
     map.layout.forEach((row, y) => {
-    row.forEach((tile, x) => {
-        const left = x * tileSize;
-        const top = y * tileSize;
+        row.forEach((tile, x) => {
+            const left = x * tileSize;
+            const top = y * tileSize;
 
-        if (tile === 'active') {
-        canvas.add(
-            new Rect({
-            left,
-            top,
-            width: tileSize,
-            height: tileSize,
-            fill: '#e0e0e0',
-            selectable: false,
-            evented: false,
-            })
-        );
-        } else if (tile === 'door') {
-        canvas.add(
-            new Rect({
-            left,
-            top,
-            width: tileSize,
-            height: tileSize,
-            fill: '#ffcc00',
-            selectable: false,
-            evented: false,
-            })
-        );
-        }
-    });
+            if (tile === 'active') {
+                canvas.add(
+                    new Rect({
+                        left,
+                        top,
+                        width: tileSize,
+                        height: tileSize,
+                        fill: '#e0e0e0',
+                        selectable: false,
+                        evented: false,
+                    })
+                );
+            } else if (tile === 'door') {
+                canvas.add(
+                    new Rect({
+                        left,
+                        top,
+                        width: tileSize,
+                        height: tileSize,
+                        fill: '#ffcc00',
+                        selectable: false,
+                        evented: false,
+                    })
+                );
+            }
+        });
     });
 
     createGrid(map.layout);
@@ -342,15 +348,19 @@ const enableSnapping = () => {
 
 const isPlacementValid = (left: number, top: number, width: number, height: number, excludeObject?: Rect): boolean => {
     if (!canvasRef.current) return false;
-    const canvas = canvasRef.current;
+    // if (!mapLayout) {
+    //     toast.error('Map layout is not loaded. Please load a map first.');
+    //     return false;
+    // }
 
+    const canvas = canvasRef.current;
     const canvasWidth = canvas.getWidth();
     const canvasHeight = canvas.getHeight();
 
     // Check if the object is out of canvas bounds
     if (left < 0 || top < 0 || left + width > canvasWidth || top + height > canvasHeight) {
-    toast.error('Invalid placement: Out of bounds.');
-    return false;
+        toast.error('Invalid placement: Out of bounds.');
+        return false;
     }
 
     // Check if the object is placed in inactive or restricted areas
@@ -360,28 +370,28 @@ const isPlacementValid = (left: number, top: number, width: number, height: numb
     const endY = Math.floor((top + height - 1) / tileSize);
 
     for (let y = startY; y <= endY; y++) {
-    for (let x = startX; x <= endX; x++) {
-        if (mapLayout?.[y]?.[x] === 'inactive' || mapLayout?.[y]?.[x] === 'door') {
-        toast.error('Invalid placement: Collision with restricted area.');
-        return false;
+        for (let x = startX; x <= endX; x++) {
+            if (mapLayout && typeof mapLayout[y]?.[x] === 'string' && (mapLayout[y][x] === 'inactive' || mapLayout[y][x] === 'door')) {
+                toast.error('Invalid placement: Collision with restricted area.');
+                return false;
+            }
         }
-    }
     }
 
     // Check for collisions with other objects
     const objects = canvas.getObjects().filter((obj) => obj.evented || obj.selectable);
     for (const obj of objects) {
-    if (obj === excludeObject) continue;
+        if (obj === excludeObject) continue;
 
-    const objLeft = obj.left || 0;
-    const objTop = obj.top || 0;
-    const objWidth = Math.floor(obj.getScaledWidth() / tileSize) * tileSize;
-    const objHeight = Math.floor(obj.getScaledHeight() / tileSize) * tileSize;
+        const objLeft = obj.left || 0;
+        const objTop = obj.top || 0;
+        const objWidth = Math.floor(obj.getScaledWidth() / tileSize) * tileSize;
+        const objHeight = Math.floor(obj.getScaledHeight() / tileSize) * tileSize;
 
-    if (left < objLeft + objWidth && left + width > objLeft && top < objTop + objHeight && top + height > objTop) {
-        toast.error('Invalid placement: Collision with another object.');
-        return false;
-    }
+        if (left < objLeft + objWidth && left + width > objLeft && top < objTop + objHeight && top + height > objTop) {
+            toast.error('Invalid placement: Collision with another object.');
+            return false;
+        }
     }
 
     return true;

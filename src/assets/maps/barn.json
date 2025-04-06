@@ -3,6 +3,23 @@
   "employees": 10,
   "parking": 2,
   "layout": [
-    
+    ["stair", "stair", "stair", "stair", "stair", "stair", "stair", "stair", "stair", "stair", "stair"],
+    ["stair", "stair", "stair", "stair", "stair", "stair", "stair", "stair", "stair", "stair", "stair"],
+    ["stair", "stair", "stair", "stair", "stair", "stair", "stair", "stair", "stair", "stair", "stair"],
+    ["stair", "stair", "stair", "stair", "stair", "stair", "stair", "stair", "stair", "stair", "stair"],
+    ["active", "active", "active", "active", "active", "active", "active", "active", "active", "active", "active"],
+    ["active", "active", "active", "active", "active", "active", "active", "active", "active", "active", "active"],
+    ["active", "active", "active", "active", "active", "active", "active", "active", "active", "active", "active"],
+    ["active", "active", "active", "active", "active", "active", "active", "active", "active", "active", "active"],
+    ["active", "active", "active", "active", "active", "active", "active", "active", "active", "active", "active"],
+    ["inactive", "active", "active", "active", "active", "active", "active", "active", "active", "active", "inactive"],
+    ["active", "active", "active", "active", "active", "active", "active", "active", "active", "active", "active"],
+    ["active", "active", "active", "active", "active", "active", "active", "active", "active", "active", "active"],
+    ["active", "active", "active", "active", "active", "active", "active", "active", "active", "active", "active"],
+    ["active", "active", "active", "active", "active", "active", "active", "active", "active", "active", "active"],
+    ["active", "active", "active", "active", "active", "active", "active", "active", "active", "active", "active"],
+    ["active", "active", "active", "active", "active", "active", "active", "active", "active", "active", "active"],
+    ["active", "active", "active", "active", "active", "active", "active", "active", "active", "active", "active"],
+    ["active", "active", "active", "active", "active", "active", "active", "active", "active", "active", "active"]
   ]
 }
