@@ -101,30 +101,41 @@ const displayDefaultMessage = () => {
 
 const loadMap = (map: { name: string; layout: string[][] }) => {
     if (!canvasRef.current) return;
+
     const canvas = canvasRef.current;
+
+    // Destroy the existing canvas instance
+    canvas.dispose();
+
+    // Reinitialize the canvas
+    canvasRef.current = new Canvas('canvas', {
+        width: 10 * tileSize,
+        height: 13 * tileSize,
+        selection: false,
+    });
+
+    const newCanvas = canvasRef.current;
 
     if (!map.layout || map.layout.length === 0) {
         toast.error('Invalid map layout');
-        canvas.clear();
         const text = new Textbox('ERROR: Unable to load layout.', {
-            left: canvas.getWidth() / 2,
-            top: canvas.getHeight() / 2,
+            left: newCanvas.getWidth() / 2,
+            top: newCanvas.getHeight() / 2,
             originX: 'center',
             originY: 'center',
             fontSize: 20,
             fill: '#888',
             selectable: false,
             evented: false,
-            width: canvas.getWidth(),
+            width: newCanvas.getWidth(),
             textAlign: 'center',
         });
-        canvas.add(text);
+        newCanvas.add(text);
         return;
     }
 
     setMapLayout(map.layout); // Update mapLayout state
     updateCanvasSize(map);
-    canvas.clear();
 
     map.layout.forEach((row, y) => {
         row.forEach((tile, x) => {
@@ -132,7 +143,7 @@ const loadMap = (map: { name: string; layout: string[][] }) => {
             const top = y * tileSize;
 
             if (tile === 'active') {
-                canvas.add(
+                newCanvas.add(
                     new Rect({
                         left,
                         top,
@@ -144,7 +155,7 @@ const loadMap = (map: { name: string; layout: string[][] }) => {
                     })
                 );
             } else if (tile === 'door') {
-                canvas.add(
+                newCanvas.add(
                     new Rect({
                         left,
                         top,
