@@ -2,19 +2,25 @@
   "name": "Motel",
   "employees": 0,
   "parking": 0,
-  "layout": [
-    ["active", "active", "active", "active", "active", "inactive", "inactive", "inactive", "inactive", "inactive"],
-    ["active", "active", "active", "active", "active", "inactive", "inactive", "inactive", "inactive", "inactive"],
-    ["active", "active", "active", "active", "active", "inactive", "inactive", "inactive", "inactive", "inactive"],
-    ["active", "active", "active", "active", "active", "inactive", "inactive", "inactive", "inactive", "inactive"],
-    ["active", "active", "active", "active", "active", "inactive", "inactive", "inactive", "inactive", "inactive"],
-    ["active", "active", "active", "active", "active", "inactive", "inactive", "inactive", "inactive", "inactive"],
-    ["active", "active", "active", "active", "active", "inactive", "inactive", "inactive", "inactive", "inactive"],
-    ["active", "active", "active", "active", "active", "active", "active", "active", "active", "active"],
-    ["active", "active", "active", "active", "active", "active", "active", "active", "active", "active"],
-    ["active", "active", "active", "active", "active", "active", "active", "active", "active", "active"],
-    ["active", "active", "active", "active", "active", "active", "active", "active", "active", "active"],
-    ["active", "door", "door", "door", "active", "active", "active", "active", "active", "active"],
-    ["active", "door", "door", "door", "active", "active", "active", "active", "active", "active"]
+  "ground": 0,
+  "floors": [
+    {
+      "name": "Ground Floor",
+      "layout": [
+        ["active", "active", "active", "active", "active", "inactive", "inactive", "inactive", "inactive", "inactive"],
+        ["active", "active", "active", "active", "active", "inactive", "inactive", "inactive", "inactive", "inactive"],
+        ["active", "active", "active", "active", "active", "inactive", "inactive", "inactive", "inactive", "inactive"],
+        ["active", "active", "active", "active", "active", "inactive", "inactive", "inactive", "inactive", "inactive"],
+        ["active", "active", "active", "active", "active", "inactive", "inactive", "inactive", "inactive", "inactive"],
+        ["active", "active", "active", "active", "active", "inactive", "inactive", "inactive", "inactive", "inactive"],
+        ["active", "active", "active", "active", "active", "inactive", "inactive", "inactive", "inactive", "inactive"],
+        ["active", "active", "active", "active", "active", "active", "active", "active", "active", "active"],
+        ["active", "active", "active", "active", "active", "active", "active", "active", "active", "active"],
+        ["active", "active", "active", "active", "active", "active", "active", "active", "active", "active"],
+        ["active", "active", "active", "active", "active", "active", "active", "active", "active", "active"],
+        ["active", "door", "door", "door", "active", "active", "active", "active", "active", "active"],
+        ["active", "door", "door", "door", "active", "active", "active", "active", "active", "active"]
+      ]
+    }
   ]
 }
